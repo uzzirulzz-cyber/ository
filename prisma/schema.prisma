@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// A single WhatsApp msgstore.db forensic recovery session.
+/// NOTE: only metadata is stored. Recovered message content stays in the
+/// user's browser and is never sent to the server, for privacy.
+model RecoverySession {
+  id                 String   @id @default(cuid())
+  fileName           String
+  fileSizeBytes      BigInt
+  existingMessages   Int
+  recoveredFragments Int
+  chatCount          Int
+  durationMs         Int
+  status             String // "completed" | "partial" | "failed"
+  // SHA-256 of the analysed file, used to detect duplicates
+  fileHash           String?
+  note               String?
+  createdAt          DateTime @default(now())
+}
